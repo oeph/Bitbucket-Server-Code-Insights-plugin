@@ -37,6 +37,7 @@ import java.util.Optional;
 @Setter(onMethod = @__(@DataBoundSetter))
 @RequiredArgsConstructor(onConstructor = @__(@DataBoundConstructor))
 public class CodeInsightsBuilder extends Builder implements SimpleBuildStep {
+    private final String project;
     private final String repositoryName;
     private final String commitId;
 
@@ -64,7 +65,7 @@ public class CodeInsightsBuilder extends Builder implements SimpleBuildStep {
             CredentialsProvider.findCredentialById(descriptor.sonarQubeCredentialId, UsernamePasswordCredentialsImpl.class, run));
         new KotlinEntryPoint(
             run, workspace, envVars, launcher, listener, // given by Jenkins
-            descriptor.bitbucketUrl, descriptor.project, descriptor.reportKey,
+            descriptor.bitbucketUrl, project, descriptor.reportKey,
             bitbucketUsernamePassword.map(UsernamePasswordCredentialsImpl::getUsername).orElse(""),
             bitbucketUsernamePassword.map(UsernamePasswordCredentialsImpl::getPassword).map(Secret::getPlainText).orElse(""), // mandatory global settings (Bitbucket)
             descriptor.sonarQubeUrl, sonarQubeToken.map(StringCredentialsImpl::getSecret).map(Secret::getPlainText).orElse(""),
@@ -81,7 +82,6 @@ public class CodeInsightsBuilder extends Builder implements SimpleBuildStep {
     @Getter
     public static final class DescriptorImpl extends BuildStepDescriptor<Builder> {
         private String bitbucketUrl;
-        private String project;
         private String reportKey;
         private String bitbucketCredentialId;
         private String sonarQubeUrl;
@@ -95,7 +95,6 @@ public class CodeInsightsBuilder extends Builder implements SimpleBuildStep {
         public boolean configure(final StaplerRequest req, final JSONObject json) {
             final JSONObject globalSettings = json.getJSONObject("codeInsights");
             this.bitbucketUrl = globalSettings.getString("bitbucketUrl");
-            this.project = globalSettings.getString("project");
             this.reportKey = globalSettings.getOrDefault("reportKey", "").toString();
             this.bitbucketCredentialId = globalSettings.getString("bitbucketCredentialId");
             this.sonarQubeUrl = globalSettings.getOrDefault("sonarQubeUrl", "").toString();
