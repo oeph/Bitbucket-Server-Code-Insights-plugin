@@ -46,7 +46,7 @@ class CoverageUsecase(
                 "Coverage Report for Jenkins."
             )
         ).toRequestBody(applicationJsonMediaType)
-        httpClient.putReport(reportRequestBody, "$reportKey _ coverage")
+        httpClient.putReport(reportRequestBody, reportKey + "_coverage")
         JenkinsLogger.info("Finish Coverage overview")
     }
 }

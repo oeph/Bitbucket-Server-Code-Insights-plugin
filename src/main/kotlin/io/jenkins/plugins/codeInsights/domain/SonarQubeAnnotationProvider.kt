@@ -83,6 +83,8 @@ class SonarQubeAnnotationProvider(
                 it.body!!.string()
             } else {
                 JenkinsLogger.info("Failed to call $name API")
+                JenkinsLogger.info("Reason: ${it.code} ${it.message}")
+                JenkinsLogger.info("To: $url")
                 JenkinsLogger.info(it.body!!.string())
                 null
             }
